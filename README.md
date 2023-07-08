@@ -4,8 +4,8 @@
 
 2. Clone the project
 ```
-git clone
-cd ProcessInjection
+git clone https://github.com/Silme94/Shellcode-Process-Injection
+cd Shellcode-Process-Injection
 ```
 3. Open main.c and change the shellcode and the process name.
 
