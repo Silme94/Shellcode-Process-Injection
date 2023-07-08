@@ -48,11 +48,11 @@ int main(void) {
 	printf("[!] Finding process ID...\n");
 	int PID = getProcessIdByName(ProcessToInject);
 	if (PID == 0) {
-		printf("[-] Failed to get process id.\n");
+		printf("[-] Failed to get process ID.\n");
 		return -1;
 	}
 
-	printf("[!] Opening Process...\n");
+	printf("[!] Opening process...\n");
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, PID);
 	if (hProcess == NULL) {
 		printf("[-] Failed to open process.\n");
