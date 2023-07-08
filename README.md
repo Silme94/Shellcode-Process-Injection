@@ -21,3 +21,6 @@ cd bin
 mingw32-make
 ```
 5. Execute the output file.
+```
+procInj.exe
+```
