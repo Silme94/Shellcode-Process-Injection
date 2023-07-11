@@ -100,6 +100,7 @@ int getProcessIdByName(const char* procName) {
 	do {
 		if (strcmp(procName, procEntry32.szExeFile) == 0) {
 			pid = procEntry32.th32ProcessID;
+			break;
 		}
 	} while (Process32Next(hSnap, &procEntry32));
 
